@@ -17,7 +17,7 @@ func getUserByID(conn *grpc.ClientConn) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	md := metadata.New(map[string]string{"token": "invalid"})
+	md := metadata.New(map[string]string{"token": "valid"})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	resp, err := c.GetUserByID(ctx, &pb.ID{ID: 1})
