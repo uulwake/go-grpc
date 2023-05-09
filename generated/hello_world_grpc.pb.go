@@ -4,7 +4,7 @@
 // - protoc             v3.6.1
 // source: proto/hello_world/hello_world.proto
 
-package grpc
+package generated
 
 import (
 	context "context"

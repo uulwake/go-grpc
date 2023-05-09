@@ -1,4 +1,4 @@
-module grpc
+module github.com/uulwake/grpc
 
 go 1.18
 
