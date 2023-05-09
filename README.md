@@ -1,11 +1,11 @@
 # Go gRPC
 
-Learn about
+## Learn about
 1. Protobuf
 2. gRPC client and server
 3. Interceptors
 
-How to run:
+## How to run
 1. Server
     ```bash
         make run-grpc-server
@@ -16,6 +16,7 @@ How to run:
         make run-grpc-client
     ```
 
+## Watch Mode
 You can also run the server in watch mode if you have Node.js installed.
 1. Install nodemon globally
     ```bash
@@ -27,3 +28,13 @@ You can also run the server in watch mode if you have Node.js installed.
     ```
 
 Now, every time you change `*.go` file in this project, the server will be recompiled and run automatically.
+
+## Git Submodule
+1. Check all of submodule status
+    ```bash
+        make submodule-status
+    ```
+2. Pull latest commit
+    ```bash
+        make submodule-pull
+    ```

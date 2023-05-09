@@ -16,3 +16,9 @@ run-grpc-client: generate-proto
 
 watch-grpc-server: generate-proto
 	@nodemon --watch './**/*.go' --ignore ./generated --signal SIGTERM --exec 'go' run cmd/server/main.go
+
+submodule-status:
+	git submodule foreach git status
+
+submodule-pull:
+	git submodule foreach git pull origin main
