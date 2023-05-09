@@ -12,13 +12,7 @@ import (
 	pb "github.com/uulwake/grpc/generated"
 )
 
-func main() {
-	conn, err := grpc.Dial("localhost:3000", grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-	defer conn.Close()
-
+func getUserByID(conn *grpc.ClientConn) error {
 	c := pb.NewUserClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
@@ -28,9 +22,41 @@ func main() {
 
 	resp, err := c.GetUserByID(ctx, &pb.ID{ID: 1})
 	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+		return err
 	}
 
-	log.Println(resp.ID, resp.Name, resp.Email)
+	log.Println("GetUserByID: ", resp.ID, resp.Name, resp.Email)
+	return nil
+}
 
+func sayHello(conn *grpc.ClientConn) error {
+	c := pb.NewGreeterClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	resp, err := c.SayHello(ctx, &pb.HelloRequest{Name: "Ulrich"})
+	if err != nil {
+		return err
+	}
+
+	log.Println("SayHello: ", resp.Message)
+	return nil
+}
+
+func main() {
+	conn, err := grpc.Dial("localhost:3000", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Fatalf("did not connect: %v", err)
+	}
+	defer conn.Close()
+
+	err = getUserByID(conn)
+	if err != nil {
+		log.Fatalf("cannot getUserByID: %v", err)
+	}
+
+	err = sayHello(conn)
+	if err != nil {
+		log.Fatalf("cannot sayHello: %v", err)
+	}
 }

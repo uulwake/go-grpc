@@ -15,7 +15,6 @@ type greeter struct {
 }
 
 func (g *greeter) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
-	log.Printf("received: %v", req.GetName())
 	return &pb.HelloReply{Message: "Hello " + req.GetName()}, nil
 }
 
@@ -24,7 +23,6 @@ type user struct {
 }
 
 func (u *user) GetUserByID(ctx context.Context, req *pb.ID) (*pb.UserData, error) {
-	log.Printf("received: %v", req.GetID())
 	return &pb.UserData{
 		ID:    int64(1),
 		Name:  "Ulrich",
