@@ -30,7 +30,7 @@ You can also run the server in watch mode if you have Node.js installed.
 Now, every time you change `*.go` file in this project, the server will be recompiled and run automatically.
 
 ## Git Submodule
-1. Check all of submodule status
+1. Check all of submodules status
     ```bash
         make submodule-status
     ```
