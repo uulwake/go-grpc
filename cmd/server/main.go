@@ -6,6 +6,7 @@ import (
 	"net"
 
 	pb "github.com/uulwake/grpc/generated"
+	"github.com/uulwake/grpc/interceptors"
 	"google.golang.org/grpc"
 )
 
@@ -37,7 +38,12 @@ func main() {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			interceptors.LogRequest,
+			interceptors.Authenticate,
+		),
+	)
 	pb.RegisterGreeterServer(s, &greeter{})
 	pb.RegisterUserServer(s, &user{})
 	log.Printf("server is listening at port %v", listener.Addr())

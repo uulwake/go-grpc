@@ -7,6 +7,7 @@ import (
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 
 	pb "github.com/uulwake/grpc/generated"
 )
@@ -21,6 +22,9 @@ func main() {
 	c := pb.NewUserClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
+
+	md := metadata.New(map[string]string{"token": "valid"})
+	ctx = metadata.NewOutgoingContext(ctx, md)
 
 	resp, err := c.GetUserByID(ctx, &pb.ID{ID: 1})
 	if err != nil {
