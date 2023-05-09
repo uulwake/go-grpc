@@ -4,7 +4,9 @@ all:
 generate-proto:
 	@protoc --go_out=. --go-grpc_out=. \
 		./proto/hello_world/hello_world.proto \
-		./proto/user/user.proto
+		./proto/user/user.proto \
+		./shared-proto/item/item.proto \
+		./shared-proto/order/order.proto 
 
 run-grpc-server: generate-proto
 	@go run cmd/server/main.go
