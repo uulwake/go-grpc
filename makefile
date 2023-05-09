@@ -11,3 +11,6 @@ run-grpc-server: generate-proto
 
 run-grpc-client: generate-proto
 	@go run cmd/client/main.go
+
+watch-grpc-server: generate-proto
+	@nodemon --watch './**/*.go' --ignore ./generated --signal SIGTERM --exec 'go' run cmd/server/main.go
