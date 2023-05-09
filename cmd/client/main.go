@@ -18,15 +18,15 @@ func main() {
 	}
 	defer conn.Close()
 
-	c := pb.NewGreeterClient(conn)
+	c := pb.NewUserClient(conn)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
-	resp, err := c.SayHello(ctx, &pb.HelloRequest{Name: "Ulrich"})
+	resp, err := c.GetUserByID(ctx, &pb.ID{ID: 1})
 	if err != nil {
 		log.Fatalf("could not greet: %v", err)
 	}
 
-	log.Println(resp.GetMessage())
+	log.Println(resp.ID, resp.Name, resp.Email)
 
 }

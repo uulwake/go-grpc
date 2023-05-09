@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "./generated";
+
+package user;
+
+service User {
+    rpc GetUserByID(ID) returns (UserData) {}
+}
+
+message ID {
+    int64 ID = 1;
+}
+
+message UserData {
+    int64 ID = 1;
+    string name = 2;
+    string email = 3;
+}

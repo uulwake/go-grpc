@@ -9,13 +9,26 @@ import (
 	"google.golang.org/grpc"
 )
 
-type server struct {
+type greeter struct {
 	pb.UnimplementedGreeterServer
 }
 
-func (s *server) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
+func (g *greeter) SayHello(ctx context.Context, req *pb.HelloRequest) (*pb.HelloReply, error) {
 	log.Printf("received: %v", req.GetName())
 	return &pb.HelloReply{Message: "Hello " + req.GetName()}, nil
+}
+
+type user struct {
+	pb.UnimplementedUserServer
+}
+
+func (u *user) GetUserByID(ctx context.Context, req *pb.ID) (*pb.UserData, error) {
+	log.Printf("received: %v", req.GetID())
+	return &pb.UserData{
+		ID:    int64(1),
+		Name:  "Ulrich",
+		Email: "ulrich@gmail.com",
+	}, nil
 }
 
 func main() {
@@ -25,7 +38,8 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	pb.RegisterGreeterServer(s, &server{})
+	pb.RegisterGreeterServer(s, &greeter{})
+	pb.RegisterUserServer(s, &user{})
 	log.Printf("server is listening at port %v", listener.Addr())
 
 	if err := s.Serve(listener); err != nil {
