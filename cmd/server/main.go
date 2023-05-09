@@ -5,7 +5,7 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/uulwake/grpc/generated"
+	pb "github.com/uulwake/grpc/generated/grpc"
 	"github.com/uulwake/grpc/interceptors"
 	"google.golang.org/grpc"
 )

@@ -9,7 +9,7 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/metadata"
 
-	pb "github.com/uulwake/grpc/generated"
+	pb "github.com/uulwake/grpc/generated/grpc"
 )
 
 func getUserByID(conn *grpc.ClientConn) error {
