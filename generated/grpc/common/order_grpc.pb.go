@@ -22,7 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OrderClient interface {
-	GetOrderByID(ctx context.Context, in *RequestID, opts ...grpc.CallOption) (*OrderData, error)
+	GetOrderByID(ctx context.Context, in *OrderId, opts ...grpc.CallOption) (*OrderData, error)
+	GetUserOrders(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*Orders, error)
 }
 
 type orderClient struct {
@@ -33,9 +34,18 @@ func NewOrderClient(cc grpc.ClientConnInterface) OrderClient {
 	return &orderClient{cc}
 }
 
-func (c *orderClient) GetOrderByID(ctx context.Context, in *RequestID, opts ...grpc.CallOption) (*OrderData, error) {
+func (c *orderClient) GetOrderByID(ctx context.Context, in *OrderId, opts ...grpc.CallOption) (*OrderData, error) {
 	out := new(OrderData)
 	err := c.cc.Invoke(ctx, "/order.Order/GetOrderByID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *orderClient) GetUserOrders(ctx context.Context, in *UserId, opts ...grpc.CallOption) (*Orders, error) {
+	out := new(Orders)
+	err := c.cc.Invoke(ctx, "/order.Order/GetUserOrders", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +56,8 @@ func (c *orderClient) GetOrderByID(ctx context.Context, in *RequestID, opts ...g
 // All implementations must embed UnimplementedOrderServer
 // for forward compatibility
 type OrderServer interface {
-	GetOrderByID(context.Context, *RequestID) (*OrderData, error)
+	GetOrderByID(context.Context, *OrderId) (*OrderData, error)
+	GetUserOrders(context.Context, *UserId) (*Orders, error)
 	mustEmbedUnimplementedOrderServer()
 }
 
@@ -54,8 +65,11 @@ type OrderServer interface {
 type UnimplementedOrderServer struct {
 }
 
-func (UnimplementedOrderServer) GetOrderByID(context.Context, *RequestID) (*OrderData, error) {
+func (UnimplementedOrderServer) GetOrderByID(context.Context, *OrderId) (*OrderData, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOrderByID not implemented")
+}
+func (UnimplementedOrderServer) GetUserOrders(context.Context, *UserId) (*Orders, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserOrders not implemented")
 }
 func (UnimplementedOrderServer) mustEmbedUnimplementedOrderServer() {}
 
@@ -71,7 +85,7 @@ func RegisterOrderServer(s grpc.ServiceRegistrar, srv OrderServer) {
 }
 
 func _Order_GetOrderByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(RequestID)
+	in := new(OrderId)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -83,7 +97,25 @@ func _Order_GetOrderByID_Handler(srv interface{}, ctx context.Context, dec func(
 		FullMethod: "/order.Order/GetOrderByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OrderServer).GetOrderByID(ctx, req.(*RequestID))
+		return srv.(OrderServer).GetOrderByID(ctx, req.(*OrderId))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Order_GetUserOrders_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserId)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OrderServer).GetUserOrders(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/order.Order/GetUserOrders",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OrderServer).GetUserOrders(ctx, req.(*UserId))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -98,6 +130,10 @@ var Order_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOrderByID",
 			Handler:    _Order_GetOrderByID_Handler,
+		},
+		{
+			MethodName: "GetUserOrders",
+			Handler:    _Order_GetUserOrders_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -6,6 +6,7 @@ import (
 	"net"
 
 	pb "github.com/uulwake/grpc/generated/grpc"
+	pbCommon "github.com/uulwake/grpc/generated/grpc/common"
 	"github.com/uulwake/grpc/interceptors"
 	"google.golang.org/grpc"
 )
@@ -30,6 +31,24 @@ func (u *user) GetUserByID(ctx context.Context, req *pb.ID) (*pb.UserData, error
 	}, nil
 }
 
+type order struct {
+	pbCommon.UnimplementedOrderServer
+}
+
+func (o *order) GetUserOrders(ctx context.Context, req *pbCommon.UserId) (*pbCommon.Orders, error) {
+	return &pbCommon.Orders{
+		Orders: []*pbCommon.OrderData{
+			{
+				ID: 1,
+				RecipientName: "ulrich",
+				Address: 12.4,
+				Status: pbCommon.ORDER_STATUS_CANCELLED,
+				RecipientPhone: "1234",
+			},
+		},
+	}, nil
+} 
+
 func main() {
 	listener, err := net.Listen("tcp", ":3000")
 	if err != nil {
@@ -44,6 +63,7 @@ func main() {
 	)
 	pb.RegisterGreeterServer(s, &greeter{})
 	pb.RegisterUserServer(s, &user{})
+	pbCommon.RegisterOrderServer(s, &order{})
 	log.Printf("server is listening at port %v", listener.Addr())
 
 	if err := s.Serve(listener); err != nil {

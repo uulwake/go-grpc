@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc/metadata"
 
 	pb "github.com/uulwake/grpc/generated/grpc"
+	pbCommon "github.com/uulwake/grpc/generated/grpc/common"
 )
 
 func getUserByID(conn *grpc.ClientConn) error {
@@ -26,6 +27,23 @@ func getUserByID(conn *grpc.ClientConn) error {
 	}
 
 	log.Println("GetUserByID: ", resp.ID, resp.Name, resp.Email)
+	return nil
+}
+
+func GetUserOrders(conn *grpc.ClientConn) error {
+	c := pbCommon.NewOrderClient(conn)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	md := metadata.New(map[string]string{"token": "valid"})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	resp, err := c.GetUserOrders(ctx, &pbCommon.UserId{ID: 2 })
+	if err != nil {
+		return err
+	}
+
+	log.Println("GetUserOrders: ", resp.Orders)
 	return nil
 }
 
@@ -58,5 +76,10 @@ func main() {
 	err = sayHello(conn)
 	if err != nil {
 		log.Fatalf("cannot sayHello: %v", err)
+	}
+
+	err = GetUserOrders(conn)
+	if err != nil {
+		log.Fatalf("cannot GetUserOrders: %v", err)
 	}
 }
